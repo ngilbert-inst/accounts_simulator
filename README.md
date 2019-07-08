@@ -1,1 +1,1 @@
-# accounts_simulator
+# Account Service Simulator
