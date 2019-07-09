@@ -13,43 +13,73 @@ class DataManager:
         self.create_db()
 
     def connect(self):
-        self.db_connection = sqlite3.connect(self.db_location)
+        self.db_connection = sqlite3.connect(self.db_location, check_same_thread=False)
+        self.db_connection.row_factory = sqlite3.Row
 
     def create_db(self):
         accounts_sql = f"""CREATE TABLE {self.accounts_table_name}
-            (id integer PRIMARY KEY, user_id BIGINT NOT NULL, team_id BIGINT NOT NULL, role_id BIGINT NOT NULL)"""
+            (id integer PRIMARY KEY, user_id integer NOT NULL, team_id integer NOT NULL, role_id integer NOT NULL)"""
         if self.db_connection is not None:
             self.db_connection.execute(accounts_sql)
 
     def insert_row(self, row):
         row_sql = f"""INSERT INTO {self.accounts_table_name} (user_id, team_id, role_id)
             VALUES(?, ?, ?)"""
+
         if self.db_connection is not None:
-            self.db_connection.execute(row_sql, row)
-            return self.db_connection.lastrowid
+            cur = self.db_connection.cursor()
+            cur.execute(row_sql, row)
+            self.db_connection.commit()
+            return cur.lastrowid
 
     def reset_db(self):
-        if not os.path.exists(os.path.dirname(__file__) + "/accounts_db.sqlite3"):
-            self.create_db()
-
-        drop_table = f"DROP TABLE {self.accounts_table_name}"
-        self.db_connection.execute(drop_table)
+        self.db_connection = None
+        if os.path.exists(self.db_location):
+            os.remove(self.db_location)
+        self.create_db()
+        self.connect()
         self.initialize()
 
     def get_account_by_id(self, id):
-        sql = f"SELECT * FROM {self.accounts_table_name} WHERE ID = {id}"
-        if self.db_connection is not None:
-            self.db_connection.execute(sql)
-            return self.db_connection.fetchone()
+        sql = f"SELECT * FROM {self.accounts_table_name} WHERE id = {id}"
+        return self.__get_row(sql)
+
+    def get_account_by_user_id(self, user_id):
+        sql = f"SELECT * FROM {self.accounts_table_name} WHERE user_id = {user_id}"
+        return self.__get_row(sql)
 
     def get_accounts_by_role_id(self, role_id):
-        sql = f"SELECT * FROM {self.accounts_table_name} WHERE ID = {role_id}"
-        if self.db_connection is not None:
-            self.db_connection.execute(sql)
-            return self.db_connection.fetchall()
+        sql = f"SELECT * FROM {self.accounts_table_name} WHERE role_id = {role_id}"
+        return self.__get_rows(sql)
+
+    def get_accounts_by_team_id(self, team_id):
+        sql = f"SELECT * FROM {self.accounts_table_name} WHERE team_id = {team_id}"
+        return self.__get_rows(sql)
+
+    def __get_row(self, sql):
+        cur = self.db_connection.cursor()
+        cur.execute(sql)
+        row = cur.fetchone()
+        if row is None:
+            row = dict()
+        else:
+            row = dict(row)
+        return row
+
+    def __get_rows(self, sql):
+        cur = self.db_connection.cursor()
+        cur.execute(sql)
+        rows = cur.fetchall()
+        if rows is None:
+            rows = list()
+        else:
+            rows = [dict(x) for x in rows]
+        return rows
 
 if __name__ == "__main__":
     dm = DataManager()
     dm.reset_db()
-
-
+    dm.insert_row((1, 1, 1))
+    dm.insert_row((2, 2, 1))
+    dm.insert_row((3, 2, 2))
+    dm.insert_row((4, 2, 2))
