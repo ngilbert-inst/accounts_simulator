@@ -23,7 +23,7 @@ def get_account(methods = ['GET', 'POST', 'DELETE']):
             result = dm.get_accounts_by_role_id(role_id)
         elif team_id is not None:
             result = dm.get_accounts_by_team_id(team_id)
-        return json.dumps(result)
+        return json.dumps({"users": result})
     else:
         abort(400)
 
