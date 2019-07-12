@@ -1,7 +1,8 @@
-import json
 from flask import Flask
 from flask import request
 from flask import abort
+from flask import jsonify
+from flask import make_response
 from data_manager import DataManager
 
 app = Flask(__name__)
@@ -23,7 +24,10 @@ def get_account(methods = ['GET', 'POST', 'DELETE']):
             result = dm.get_accounts_by_role_id(role_id)
         elif team_id is not None:
             result = dm.get_accounts_by_team_id(team_id)
-        return json.dumps({"users": result})
+
+        response = make_response(jsonify({"users": result}))
+        response.mimetype = 'application/json'
+        return response
     else:
         abort(400)
 

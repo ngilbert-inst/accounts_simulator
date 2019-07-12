@@ -61,9 +61,9 @@ class DataManager:
         cur.execute(sql)
         row = cur.fetchone()
         if row is None:
-            row = dict()
+            row = [ dict() ]
         else:
-            row = dict(row)
+            row = [ dict(row) ]
         return row
 
     def __get_rows(self, sql):
@@ -73,7 +73,7 @@ class DataManager:
         if rows is None:
             rows = list()
         else:
-            rows = [dict(x) for x in rows]
+            rows = [ dict(x) for x in rows ]
         return rows
 
 if __name__ == "__main__":
@@ -83,3 +83,5 @@ if __name__ == "__main__":
     dm.insert_row((2, 2, 1))
     dm.insert_row((3, 2, 2))
     dm.insert_row((4, 2, 2))
+    dm.insert_row((10, 2, 2))
+    dm.insert_row((20, 1, 2))
