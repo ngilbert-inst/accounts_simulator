@@ -18,13 +18,13 @@ class DataManager:
 
     def create_db(self):
         accounts_sql = f"""CREATE TABLE {self.accounts_table_name}
-            (id integer PRIMARY KEY, user_id integer NOT NULL, team_id integer NOT NULL, role_id integer NOT NULL)"""
+            (id integer PRIMARY KEY, user_id integer NOT NULL, team_id integer NOT NULL, role_id integer NOT NULL, role_title TEXT)"""
         if self.db_connection is not None:
             self.db_connection.execute(accounts_sql)
 
     def insert_row(self, row):
-        row_sql = f"""INSERT INTO {self.accounts_table_name} (user_id, team_id, role_id)
-            VALUES(?, ?, ?)"""
+        row_sql = f"""INSERT INTO {self.accounts_table_name} (user_id, team_id, role_id, role_title)
+            VALUES(?, ?, ?, ?)"""
 
         if self.db_connection is not None:
             cur = self.db_connection.cursor()
@@ -79,9 +79,9 @@ class DataManager:
 if __name__ == "__main__":
     dm = DataManager()
     dm.reset_db()
-    dm.insert_row((1, 1, 1))
-    dm.insert_row((2, 2, 1))
-    dm.insert_row((3, 2, 2))
-    dm.insert_row((4, 2, 2))
-    dm.insert_row((10, 2, 2))
-    dm.insert_row((20, 1, 2))
+    dm.insert_row((1, 1, 1, "Team Lead"))
+    dm.insert_row((2, 2, 1, "Team Lead"))
+    dm.insert_row((3, 2, 2, "Software Engineer"))
+    dm.insert_row((4, 2, 2, "Software Engineer"))
+    dm.insert_row((10, 2, 2, "Software Engineer"))
+    dm.insert_row((20, 1, 2, "Software Engineer"))
