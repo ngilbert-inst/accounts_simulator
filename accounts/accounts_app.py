@@ -29,8 +29,7 @@ def get_account(methods=['GET', 'POST', 'DELETE']):
         response = make_response(jsonify({"users": result}))
         response.mimetype = 'application/json'
         return response
-    else:
-        abort(400)
+    return abort(400)
 
 @app.route('/api/accounts/health')
 def get_health(methods=['GET']):
