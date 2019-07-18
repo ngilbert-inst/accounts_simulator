@@ -18,19 +18,23 @@ class DataManager:
 
     def create_db(self):
         accounts_sql = f"""CREATE TABLE {self.accounts_table_name}
-            (id integer PRIMARY KEY, user_id integer NOT NULL, team_id integer NOT NULL, role_id integer NOT NULL, role_title TEXT)"""
+            (id integer PRIMARY KEY,
+            user_id integer NOT NULL,
+            team_id integer NOT NULL,
+            role_id integer NOT NULL,
+            role_title TEXT)"""
         if self.db_connection is not None:
             self.db_connection.execute(accounts_sql)
 
     def insert_row(self, row):
         row_sql = f"""INSERT INTO {self.accounts_table_name} (user_id, team_id, role_id, role_title)
             VALUES(?, ?, ?, ?)"""
-
         if self.db_connection is not None:
             cur = self.db_connection.cursor()
             cur.execute(row_sql, row)
             self.db_connection.commit()
             return cur.lastrowid
+        return -1
 
     def reset_db(self):
         self.db_connection = None
@@ -40,8 +44,8 @@ class DataManager:
         self.connect()
         self.initialize()
 
-    def get_account_by_id(self, id):
-        sql = f"SELECT * FROM {self.accounts_table_name} WHERE id = {id}"
+    def get_account_by_id(self, account_id):
+        sql = f"SELECT * FROM {self.accounts_table_name} WHERE id = {account_id}"
         return self.__get_row(sql)
 
     def get_account_by_user_id(self, user_id):
@@ -61,9 +65,9 @@ class DataManager:
         cur.execute(sql)
         row = cur.fetchone()
         if row is None:
-            row = [ dict() ]
+            row = [dict()]
         else:
-            row = [ dict(row) ]
+            row = [dict(row)]
         return row
 
     def __get_rows(self, sql):
@@ -73,7 +77,7 @@ class DataManager:
         if rows is None:
             rows = list()
         else:
-            rows = [ dict(x) for x in rows ]
+            rows = [dict(x) for x in rows]
         return rows
 
 if __name__ == "__main__":
