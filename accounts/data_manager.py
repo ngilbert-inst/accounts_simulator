@@ -87,5 +87,6 @@ if __name__ == "__main__":
     dm.insert_row((2, 2, 1, "Team Lead"))
     dm.insert_row((3, 2, 2, "Software Engineer"))
     dm.insert_row((4, 2, 2, "Software Engineer"))
+    dm.insert_row((5, 2, 2, "Software Engineer"))
     dm.insert_row((10, 2, 2, "Software Engineer"))
     dm.insert_row((20, 1, 2, "Software Engineer"))
